@@ -362,6 +362,11 @@ public class DatameerWatchDog  implements IDatameerWatchDog {
 
 				url=url+"/"+jobConfigurationId;
 			}
+			else {
+				
+				log.info("No  jobConfigurationId of connection is given to deleteConnection in DatameerWatchDog ");
+				return null;
+			}
 
 			URL obj = new URL(url); 
 			HttpURLConnection con =(HttpURLConnection) obj.openConnection();
@@ -420,16 +425,20 @@ public class DatameerWatchDog  implements IDatameerWatchDog {
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
 			DataOutputStream sendingStream = new DataOutputStream(con.getOutputStream());
-			FileReader fileReader=new FileReader(jobPayLoad);
-			StringBuilder content=new StringBuilder("");
-			int ch=0;
-			while((ch=fileReader.read())!=-1) {
-				content.append((char)ch);
-			}
-			fileReader.close();
-			sendingStream.writeBytes(content.toString());
+//			FileReader fileReader=new FileReader(jobPayLoad);
+//			StringBuilder content=new StringBuilder("");
+//			int ch=0;
+//			while((ch=fileReader.read())!=-1) {
+//				content.append((char)ch);
+//			}
+//			fileReader.close();
+//			sendingStream.writeBytes(content.toString());
+//			sendingStream.flush();
+//			sendingStream.close();
+			sendingStream.writeBytes(jobPayLoad);//jobPayLoad
 			sendingStream.flush();
 			sendingStream.close();
+
 			int responseCode=con.getResponseCode();
 
 			Thread.sleep(1000);
@@ -561,6 +570,63 @@ public class DatameerWatchDog  implements IDatameerWatchDog {
 		return null;
 	}
 
+
+	public String deleteImportJob(String username, String password,
+			String datameerServerIP, String portNumber,
+			String jobConfigurationId) {
+		// TODO Auto-generated method stub
+		log.info("entering deleteImportJob in DatameerWatchDog and id = "+jobConfigurationId);
+		try {
+			String url ="http://"+datameerServerIP+":"+portNumber+"/rest/import-job";
+			
+			if (getUrl_string()!=null) {
+				
+				url=getUrl_string()+"/rest/import-job";
+			}
+
+
+			if (jobConfigurationId!=null && !jobConfigurationId.equals("")) {
+
+				url=url+"/"+jobConfigurationId;
+			}
+			else {
+				
+				log.info("No  jobConfigurationId of ImportJob is given to deleteImportJob in DatameerWatchDog ");
+				return null;
+			}
+
+			URL obj = new URL(url); 
+			HttpURLConnection con =(HttpURLConnection) obj.openConnection();
+			String userpass = username+":"+password;
+			@SuppressWarnings("restriction")
+			String basicAuth = "Basic " + new String( new sun.misc.BASE64Encoder().encode(userpass.getBytes()));
+			con.setRequestProperty ("Authorization", basicAuth);
+			con.setRequestMethod("DELETE");
+			int responseCode=con.getResponseCode();
+			Thread.sleep(1000);
+			log.info("responseCode="+responseCode);
+			String result = "";
+			String line = "";
+			if (responseCode==200) {
+				BufferedReader read = new BufferedReader(new InputStreamReader(
+						con.getInputStream()));
+				while ((line = read.readLine()) != null) {
+					result = result + line;
+				}
+				log.info("result=" + result);
+			}
+			else {
+				log.info(" The request was not processed properly by datameer. Please check the input " );
+				result=null;
+			}
+			log.info("leaving deleteImportJob in DatameerWatchDog");
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public String createWorkBookJob(String username, String password,
 			String jobPayLoad, String datameerServerIP, String portNumber) {
 		// TODO Auto-generated method stub
@@ -586,16 +652,21 @@ public class DatameerWatchDog  implements IDatameerWatchDog {
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
 			DataOutputStream sendingStream = new DataOutputStream(con.getOutputStream());
-			FileReader fileReader=new FileReader(jobPayLoad);
-			StringBuilder content=new StringBuilder("");
-			int ch=0;
-			while((ch=fileReader.read())!=-1) {
-				content.append((char)ch);
-			}
-			fileReader.close();
-			sendingStream.writeBytes(content.toString());
+//			FileReader fileReader=new FileReader(jobPayLoad);
+//			StringBuilder content=new StringBuilder("");
+//			int ch=0;
+//			while((ch=fileReader.read())!=-1) {
+//				content.append((char)ch);
+//			}
+//			fileReader.close();
+//			sendingStream.writeBytes(content.toString());
+//			sendingStream.flush();
+//			sendingStream.close();
+
+			sendingStream.writeBytes(jobPayLoad);//jobPayLoad
 			sendingStream.flush();
 			sendingStream.close();
+
 			int responseCode=con.getResponseCode();
 
 			Thread.sleep(1000);
@@ -726,6 +797,63 @@ public class DatameerWatchDog  implements IDatameerWatchDog {
 		return null;
 	}
 
+
+	public String deleteWorkBookJob(String username, String password,
+			String datameerServerIP, String portNumber,
+			String jobConfigurationId) {
+		// TODO Auto-generated method stub
+		log.info("entering deleteWorkBookJob in DatameerWatchDog and id = "+jobConfigurationId);
+		try {
+			String url ="http://"+datameerServerIP+":"+portNumber+"/rest/workbook";
+			
+			if (getUrl_string()!=null) {
+				
+				url=getUrl_string()+"/rest/workbook";
+			}
+
+
+			if (jobConfigurationId!=null && !jobConfigurationId.equals("")) {
+
+				url=url+"/"+jobConfigurationId;
+			}
+			else {
+				
+				log.info("No  jobConfigurationId of WorkBookJob is given to deleteWorkBookJob in DatameerWatchDog ");
+				return null;
+			}
+
+			URL obj = new URL(url); 
+			HttpURLConnection con =(HttpURLConnection) obj.openConnection();
+			String userpass = username+":"+password;
+			@SuppressWarnings("restriction")
+			String basicAuth = "Basic " + new String( new sun.misc.BASE64Encoder().encode(userpass.getBytes()));
+			con.setRequestProperty ("Authorization", basicAuth);
+			con.setRequestMethod("DELETE");
+			int responseCode=con.getResponseCode();
+			Thread.sleep(1000);
+			log.info("responseCode="+responseCode);
+			String result = "";
+			String line = "";
+			if (responseCode==200) {
+				BufferedReader read = new BufferedReader(new InputStreamReader(
+						con.getInputStream()));
+				while ((line = read.readLine()) != null) {
+					result = result + line;
+				}
+				log.info("result=" + result);
+			}
+			else {
+				log.info(" The request was not processed properly by datameer. Please check the input " );
+				result=null;
+			}
+			log.info("leaving deleteWorkBookJob in DatameerWatchDog");
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public String createExportJob(String username, String password,
 			String jobPayLoad, String datameerServerIP, String portNumber) {
 		// TODO Auto-generated method stub
@@ -750,16 +878,22 @@ public class DatameerWatchDog  implements IDatameerWatchDog {
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
 			DataOutputStream sendingStream = new DataOutputStream(con.getOutputStream());
-			FileReader fileReader=new FileReader(jobPayLoad);
-			StringBuilder content=new StringBuilder("");
-			int ch=0;
-			while((ch=fileReader.read())!=-1) {
-				content.append((char)ch);
-			}
-			fileReader.close();
-			sendingStream.writeBytes(content.toString());
+//			FileReader fileReader=new FileReader(jobPayLoad);
+//			StringBuilder content=new StringBuilder("");
+//			int ch=0;
+//			while((ch=fileReader.read())!=-1) {
+//				content.append((char)ch);
+//			}
+//			fileReader.close();
+//			sendingStream.writeBytes(content.toString());
+//			sendingStream.flush();
+//			sendingStream.close();
+			
+			sendingStream.writeBytes(jobPayLoad);//jobPayLoad
 			sendingStream.flush();
 			sendingStream.close();
+
+			
 			int responseCode=con.getResponseCode();
 
 			Thread.sleep(1000);
@@ -883,6 +1017,63 @@ public class DatameerWatchDog  implements IDatameerWatchDog {
 			}
 			log.info("leaving executeExportJob in DatameerWatchDog");
 
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+
+	public String deleteExportJob(String username, String password,
+			String datameerServerIP, String portNumber,
+			String jobConfigurationId) {
+		// TODO Auto-generated method stub
+		log.info("entering deleteExportJob in DatameerWatchDog and id = "+jobConfigurationId);
+		try {
+			String url ="http://"+datameerServerIP+":"+portNumber+"/rest/export-job";
+			
+			if (getUrl_string()!=null) {
+				
+				url=getUrl_string()+"/rest/export-job";
+			}
+
+
+			if (jobConfigurationId!=null && !jobConfigurationId.equals("")) {
+
+				url=url+"/"+jobConfigurationId;
+			}
+			else {
+				
+				log.info("No  jobConfigurationId of ExportJob is given to deleteExportJob in DatameerWatchDog ");
+				return null;
+			}
+
+			URL obj = new URL(url); 
+			HttpURLConnection con =(HttpURLConnection) obj.openConnection();
+			String userpass = username+":"+password;
+			@SuppressWarnings("restriction")
+			String basicAuth = "Basic " + new String( new sun.misc.BASE64Encoder().encode(userpass.getBytes()));
+			con.setRequestProperty ("Authorization", basicAuth);
+			con.setRequestMethod("DELETE");
+			int responseCode=con.getResponseCode();
+			Thread.sleep(1000);
+			log.info("responseCode="+responseCode);
+			String result = "";
+			String line = "";
+			if (responseCode==200) {
+				BufferedReader read = new BufferedReader(new InputStreamReader(
+						con.getInputStream()));
+				while ((line = read.readLine()) != null) {
+					result = result + line;
+				}
+				log.info("result=" + result);
+			}
+			else {
+				log.info(" The request was not processed properly by datameer. Please check the input " );
+				result=null;
+			}
+			log.info("leaving deleteExportJob in DatameerWatchDog");
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();

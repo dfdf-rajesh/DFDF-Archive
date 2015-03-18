@@ -36,19 +36,24 @@ public class TestBlobWithJavaObject
 	   Statement stmt = null;
 	   
 	   try{
+
+		   HashMap map = AllJobsInOneHashMap.giveDatameerObjectsASMap("Afzal", "admin", "54.86.180.167", "7777");
+		   
+		   HashMapSerialized hashMapSerialized=new HashMapSerialized(map);
+
+		   
 		   Class.forName("com.mysql.jdbc.Driver");
 
 		   System.out.println("Connecting to database...");
 		   conn = DriverManager.getConnection(DB_URL,USER,PASS);
    
 		   
-		   HashMap map = AllJobsInOneHashMap.giveDatameerObjectsASMap("", "", "", "");
-		   
-		   HashMapSerialized hashMapSerialized=new HashMapSerialized(map);
            
            // To store the meta data of jobs of datameer as Binary Large Object into MYSQL
 		   String clearSql = "delete from TestBlob ";
-		   ResultSet rs = stmt.executeQuery(clearSql);
+		   stmt = conn.createStatement();
+		   int status = stmt.executeUpdate(clearSql);
+		   System.out.println("status="+status);
            String insertSql = "INSERT INTO TestBlob values (?)";
            PreparedStatement statement = conn.prepareStatement(insertSql);
            
@@ -97,7 +102,7 @@ public class TestBlobWithJavaObject
            ResultSet rs = stmt.executeQuery(sql);
            System.out.println(rs);
            
-           if(rs.getRow() == 0)
+           if(rs.getRow() == 0 && rs.next())
            {
         	   
         	   
@@ -117,13 +122,13 @@ public class TestBlobWithJavaObject
         			   i.printStackTrace();        	       
         		   }
         	   
-        	   AllJobsInOneHashMap.createGivenDatameerObjectsASMapIntoDataMeerJobs(newMap, "", "", "", "");
            }
            else
            {
         	   System.out.println("No record");
            }
            conn.close();
+    	   AllJobsInOneHashMap.createGivenDatameerObjectsASMapIntoDataMeerJobs(newMap, "Afzal", "admin", "54.86.180.167", "7777");
            
 	   }catch(SQLException se){
 		   se.printStackTrace();
