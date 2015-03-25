@@ -26,18 +26,24 @@ public class TestBlobWithJavaObject
    
    public static void main(String[] args) 
    {
-	   insertDatameerThingsIntoMysqlDb();
-	   createDatameerThingsFromMySqlDB();
+	   //insertDatameerThingsIntoMysqlDb("1");
+	   createDatameerThingsFromMySqlDB("6739");
    }
    
-   public static void insertDatameerThingsIntoMysqlDb() {
+   public static int insertDatameerThingsIntoMysqlDb(String param) {
 
 	   Connection conn = null;	   
 	   Statement stmt = null;
 	   
+	   int size=0;
+	   
 	   try{
 
 		   HashMap map = AllJobsInOneHashMap.giveDatameerObjectsASMap("Afzal", "admin", "54.86.180.167", "7777");
+		   size = map.size();
+		   if (size==0) {
+			   return size;
+		   }
 		   
 		   HashMapSerialized hashMapSerialized=new HashMapSerialized(map);
 
@@ -50,11 +56,12 @@ public class TestBlobWithJavaObject
 		   
            
            // To store the meta data of jobs of datameer as Binary Large Object into MYSQL
-		   String clearSql = "delete from TestBlob ";
-		   stmt = conn.createStatement();
-		   int status = stmt.executeUpdate(clearSql);
-		   System.out.println("status="+status);
-           String insertSql = "INSERT INTO TestBlob values (?)";
+//		   String clearSql = "delete from TestBlob ";
+//		   stmt = conn.createStatement();
+//		   int status = stmt.executeUpdate(clearSql);
+//		   System.out.println("status="+status);
+           //String insertSql = "INSERT INTO TestBlob values (?)";
+		   String insertSql = "INSERT INTO datameer_table values (?,?)";
            PreparedStatement statement = conn.prepareStatement(insertSql);
            
 //           FileSerialize fs = new FileSerialize();
@@ -63,31 +70,42 @@ public class TestBlobWithJavaObject
 //           InputStream inputStream = new FileInputStream(new File("DatameerMetadata.dm"));
            
            Blob blob= new SerialBlob(hashMapSerialized.getHashMapSerializedBytes());
-//           
-           statement.setBlob(1,blob );
+//         
+           statement.setString(1, param);
+           statement.setBlob(2,blob );
            
           // statement.setBlob(1, hashMapSerialized.);
 
            int row = statement.executeUpdate();
            if (row > 0) {
-               System.out.println("A contact was inserted with JSON file.");
+               //System.out.println("A contact was inserted with JSON file.");
+        	   System.out.println("some jobs are stored into datameer_table.");
            }
            
            conn.close();
            
 	   }catch(SQLException se){
 		   se.printStackTrace();
+		   return -1;
 	   }catch(Exception e){
 		   e.printStackTrace();
+		   return -1;
 	   }  
    
+	   return size;
    }
    
-   public static void createDatameerThingsFromMySqlDB() {
+   public static int createDatameerThingsFromMySqlDB(String param) {
 	   
 
 	   Connection conn = null;	   
 	   Statement stmt = null;
+	   
+	   int size=-1;
+	   
+	   if (param==null || param.equals("")) {
+		   return size;
+	   }
 	   
 	   try{
 		   Class.forName("com.mysql.jdbc.Driver");
@@ -96,7 +114,8 @@ public class TestBlobWithJavaObject
 		   conn = DriverManager.getConnection(DB_URL,USER,PASS);
            
            // To retrieve the blob data from MYSQL
-		   String sql = "select * from TestBlob";		   
+		   //String sql = "select * from TestBlob";
+		   String sql = "select jobs_blob from datameer_table where id = '"+param+"'";
            stmt = conn.createStatement();
            HashMap newMap=null;
            ResultSet rs = stmt.executeQuery(sql);
@@ -126,8 +145,10 @@ public class TestBlobWithJavaObject
            else
            {
         	   System.out.println("No record");
+        	   return size;
            }
            conn.close();
+           size=newMap.size();
     	   AllJobsInOneHashMap.createGivenDatameerObjectsASMapIntoDataMeerJobs(newMap, "Afzal", "admin", "54.86.180.167", "7777");
            
 	   }catch(SQLException se){
@@ -135,6 +156,6 @@ public class TestBlobWithJavaObject
 	   }catch(Exception e){
 		   e.printStackTrace();
 	   }  
-   
+   return size;
    }
 }
