@@ -26,7 +26,7 @@ public class TestBlobWithJavaObject
    
    public static void main(String[] args) 
    {
-	   //insertDatameerThingsIntoMysqlDb("1");
+	   insertDatameerThingsIntoMysqlDb("1");
 	   createDatameerThingsFromMySqlDB("6739");
    }
    
@@ -36,11 +36,14 @@ public class TestBlobWithJavaObject
 	   Statement stmt = null;
 	   
 	   int size=0;
-	   
+	   int status=-1;
+	   HashMap map=null;
 	   try{
 
-		   HashMap map = AllJobsInOneHashMap.giveDatameerObjectsASMap("Afzal", "admin", "54.86.180.167", "7777");
-		   size = map.size();
+		   map = AllJobsInOneHashMap.giveDatameerObjectsASMap("Afzal", "admin", "54.86.180.167", "7777");
+		   if (map!=null) {
+			   size = map.size();
+		   }
 		   if (size==0) {
 			   return size;
 		   }
@@ -77,6 +80,7 @@ public class TestBlobWithJavaObject
           // statement.setBlob(1, hashMapSerialized.);
 
            int row = statement.executeUpdate();
+           status=row;
            if (row > 0) {
                //System.out.println("A contact was inserted with JSON file.");
         	   System.out.println("some jobs are stored into datameer_table.");
@@ -86,9 +90,15 @@ public class TestBlobWithJavaObject
            
 	   }catch(SQLException se){
 		   se.printStackTrace();
+		   if (status==-1 && map!=null) {
+			   AllJobsInOneHashMap.createGivenDatameerObjectsASMapIntoDataMeerJobs(map, "Afzal", "admin", "54.86.180.167", "7777");
+		   }
 		   return -1;
 	   }catch(Exception e){
 		   e.printStackTrace();
+		   if (status==-1 && map!=null) {
+			   AllJobsInOneHashMap.createGivenDatameerObjectsASMapIntoDataMeerJobs(map, "Afzal", "admin", "54.86.180.167", "7777");
+		   }
 		   return -1;
 	   }  
    
